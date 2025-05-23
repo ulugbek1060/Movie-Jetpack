@@ -2,6 +2,7 @@ package uz.maverick.movieexplorerdemo.presentation.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -10,16 +11,17 @@ import uz.maverick.movieexplorerdemo.presentation.screens.DetailScreen
 import uz.maverick.movieexplorerdemo.presentation.screens.FavoriteScreen
 import uz.maverick.movieexplorerdemo.presentation.screens.HomeScreen
 import uz.maverick.movieexplorerdemo.presentation.screens.SearchScreen
+import uz.maverick.movieexplorerdemo.presentation.viewModels.MainViewModel
 import uz.maverick.movieexplorerdemo.utils.Logger
 
 @Composable
 fun SetupNavController(
-    modifier: Modifier = Modifier,
-    navController: NavHostController
+    navController: NavHostController,
+    mainViewModel: MainViewModel = viewModel()
 ) {
     NavHost(navController = navController, startDestination = Destinations.HomeScreen.label) {
         composable(route = Destinations.HomeScreen.label) {
-            HomeScreen(navController = navController)
+            HomeScreen(navController = navController, viewModel = mainViewModel)
         }
         composable(route = Destinations.FavoriteScreen.label) {
             FavoriteScreen(navController = navController)

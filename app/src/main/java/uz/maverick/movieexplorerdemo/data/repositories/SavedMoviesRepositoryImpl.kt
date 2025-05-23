@@ -2,7 +2,6 @@ package uz.maverick.movieexplorerdemo.data.repositories
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -28,9 +27,9 @@ class SavedMoviesRepositoryImpl @Inject constructor(
             list.map { it.toMovieItemEntity() }
         }.flowOn(Dispatchers.IO)
 
-    override fun isMovieInFavorites(movieId: Int) = flow {
-        emit(favoriteMoviesDao.isFavorite(movieId))
-    }.flowOn(Dispatchers.IO)
+    override fun isMovieInFavorites(movieId: Int) =
+        favoriteMoviesDao.isFavorite(movieId)
+            .flowOn(Dispatchers.IO)
 
     override suspend fun removeFromFavorites(
         movieId: Int

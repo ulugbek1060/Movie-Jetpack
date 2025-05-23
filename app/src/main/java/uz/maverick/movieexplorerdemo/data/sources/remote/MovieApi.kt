@@ -12,6 +12,7 @@ import uz.maverick.movieexplorerdemo.data.models.remote.MoviesData
  * API KEY = "7f442ff583bfb38f84caafd113cbccc0"
  */
 interface MovieApi {
+
     @GET("movie/popular")
     suspend fun getPopularMovies(
         @Query("api_key") apiKey: String = BuildConfig.TMDB_API_KEY,

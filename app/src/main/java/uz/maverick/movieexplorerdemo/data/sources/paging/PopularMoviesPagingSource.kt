@@ -15,14 +15,12 @@ class PopularMoviesPagingSource (
             val page = params.key ?: 1
             val response = apiService.getPopularMovies(page = page)
             val list = response.results ?: listOf()
-            Logger.d("PopularMoviesPagingSource", "Page: $page, List size: ${list.size}")
             LoadResult.Page(
                 data = list,
                 prevKey = if (page == 1) null else page - 1,
                 nextKey = if (list.isEmpty()) null else page + 1,
             )
         } catch (e: Exception) {
-            Logger.e("Error loading data: ${e.message}", "PopularMoviesPagingSource", e)
             LoadResult.Error(e)
         }
     }

@@ -3,15 +3,16 @@ package uz.maverick.movieexplorerdemo.presentation.screens
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -19,13 +20,16 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import uz.maverick.movieexplorerdemo.presentation.viewModels.MovieDetailViewModel
+import uz.maverick.movieexplorerdemo.presentation.widgets.ProgressWidget
 import uz.maverick.movieexplorerdemo.utils.POSTER_PATH_ORIGINAL
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,7 +39,8 @@ fun DetailScreen(
     movieId: Int,
     viewModel: MovieDetailViewModel = hiltViewModel()
 ) {
-    var state = viewModel.movieDetailState.collectAsState()
+    val state = viewModel.movieDetailState.collectAsState()
+
     LaunchedEffect(movieId) {
         viewModel.getMovieDetail(movieId)
     }
@@ -44,25 +49,38 @@ fun DetailScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text("Movie Details", style = MaterialTheme.typography.titleLarge)
+                    if (state.value is MovieDetailViewModel.State.Loading) {
+                        Text("Loading...")
+                    } else if (state.value is MovieDetailViewModel.State.Error) {
+                        Text("Error")
+                    } else {
+                        val movie = (state.value as MovieDetailViewModel.State.Success).data
+                        Text(movie.title.orEmpty())
+                    }
                 },
                 actions = {
-                    if (state.value is MovieDetailViewModel.State.Success){
-                        val isInFavorite = (state.value as MovieDetailViewModel.State.Success).isInFavorite
-                        Icon(
-                            if (isInFavorite) Icons.Rounded.FavoriteBorder else Icons.Rounded.FavoriteBorder,
-                            contentDescription = "Book mark",
-                            modifier = Modifier.clickable {
-                                viewModel.toggleFavoriteButton()
-                            }
-                        )
+                    if (state.value is MovieDetailViewModel.State.Success) {
+                        val isInFavorite =
+                            (state.value as MovieDetailViewModel.State.Success).isInFavorite
+                        IconButton(
+                            onClick = {  viewModel.toggleFavoriteButton() },
+                        ) {
+                            Icon(
+                                imageVector = if (isInFavorite) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+                                contentDescription = "Bookmark",
+                                tint = if (isInFavorite) Color.Red else Color.Gray,
+                            )
+                        }
                     }
                 }
             )
         },
-
-        ) { paddingValues ->
-        Box(modifier = Modifier.padding(paddingValues)) {
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
             when {
                 state.value is MovieDetailViewModel.State.Error -> {
                     Text(
@@ -73,9 +91,7 @@ fun DetailScreen(
                 }
 
                 state.value is MovieDetailViewModel.State.Loading -> {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(50.dp)
-                    )
+                    ProgressWidget()
                 }
 
                 state.value is MovieDetailViewModel.State.Success -> {

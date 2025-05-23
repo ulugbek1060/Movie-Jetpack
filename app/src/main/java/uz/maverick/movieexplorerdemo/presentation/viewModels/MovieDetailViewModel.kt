@@ -32,6 +32,7 @@ class MovieDetailViewModel @Inject constructor(
                     savedMoviesRepository.isMovieInFavorites(movieId),
                     repository.getMovieDetails(movieId)
                 ) { isInFavorite, movie ->
+                    Logger.d("isInFavorite: $isInFavorite")
                     State.Success(
                         data = movie,
                         isInFavorite = isInFavorite
@@ -54,7 +55,6 @@ class MovieDetailViewModel @Inject constructor(
             ) {
                 return@launch
             }
-            // save
             val state = (_movieDetailState.value as State.Success)
             Logger.d("isInFavorite: ${state.isInFavorite}")
             if (state.isInFavorite){
