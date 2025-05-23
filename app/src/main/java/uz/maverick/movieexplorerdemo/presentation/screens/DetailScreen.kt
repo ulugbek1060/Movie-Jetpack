@@ -1,0 +1,112 @@
+package uz.maverick.movieexplorerdemo.presentation.screens
+
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.FavoriteBorder
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import uz.maverick.movieexplorerdemo.presentation.viewModels.MovieDetailViewModel
+import uz.maverick.movieexplorerdemo.utils.POSTER_PATH_ORIGINAL
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DetailScreen(
+    navController: NavController,
+    movieId: Int,
+    viewModel: MovieDetailViewModel = hiltViewModel()
+) {
+    var state = viewModel.movieDetailState.collectAsState()
+    LaunchedEffect(movieId) {
+        viewModel.getMovieDetail(movieId)
+    }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text("Movie Details", style = MaterialTheme.typography.titleLarge)
+                },
+                actions = {
+                    if (state.value is MovieDetailViewModel.State.Success){
+                        val isInFavorite = (state.value as MovieDetailViewModel.State.Success).isInFavorite
+                        Icon(
+                            if (isInFavorite) Icons.Rounded.FavoriteBorder else Icons.Rounded.FavoriteBorder,
+                            contentDescription = "Book mark",
+                            modifier = Modifier.clickable {
+                                viewModel.toggleFavoriteButton()
+                            }
+                        )
+                    }
+                }
+            )
+        },
+
+        ) { paddingValues ->
+        Box(modifier = Modifier.padding(paddingValues)) {
+            when {
+                state.value is MovieDetailViewModel.State.Error -> {
+                    Text(
+                        text = "Error: ${(state.value as MovieDetailViewModel.State.Error).message}",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                }
+
+                state.value is MovieDetailViewModel.State.Loading -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(50.dp)
+                    )
+                }
+
+                state.value is MovieDetailViewModel.State.Success -> {
+                    val movie = (state.value as MovieDetailViewModel.State.Success).data
+                    Column {
+                        AsyncImage(
+                            model = POSTER_PATH_ORIGINAL + movie.poster_path,
+                            contentDescription = "Постер фильма",
+                            modifier = Modifier
+                                .height(300.dp)
+                                .fillMaxWidth(),
+                            contentScale = ContentScale.FillWidth
+                        )
+                        Text(
+                            text = movie.title.orEmpty(),
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(top = 8.dp, start = 4.dp, end = 4.dp)
+                        )
+                        Text(
+                            text = "Rating: ${movie.vote_average ?: "N/A"}",
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 4.dp)
+                        )
+                        Text(
+                            text = movie.overview ?: "Overview",
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 4.dp)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
