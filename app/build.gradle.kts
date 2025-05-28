@@ -71,7 +71,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.0")
 
-    implementation("androidx.navigation:navigation-compose:2.9.0")
+    // bottom navigation
+    implementation("androidx.compose.material:material:1.8.2")
 
     // hilt
     implementation("com.google.dagger:hilt-android:2.51")

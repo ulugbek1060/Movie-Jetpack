@@ -5,13 +5,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.core.content.ContextCompat
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import uz.maverick.movieexplorerdemo.presentation.navigation.SetupNavController
+import uz.maverick.movieexplorerdemo.presentation.navigation.root.AppNavHost
+import uz.maverick.movieexplorerdemo.presentation.screens.main.MainScreen
 import uz.maverick.movieexplorerdemo.ui.theme.MovieExplorerDemoTheme
-
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -23,7 +21,8 @@ class MainActivity : ComponentActivity() {
         }
         setContent {
             MovieExplorerDemoTheme {
-                SetupNavController(navController = rememberNavController())
+                AppNavHost(rememberNavController())
+//                SetupNavController(navController = )
             }
         }
     }

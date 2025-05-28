@@ -1,4 +1,4 @@
-package uz.maverick.movieexplorerdemo.presentation.screens
+package uz.maverick.movieexplorerdemo.presentation.screens.main
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,11 +29,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import uz.maverick.movieexplorerdemo.domain.entities.MovieItemContainer
 import uz.maverick.movieexplorerdemo.domain.entities.MovieItemEntity
-import uz.maverick.movieexplorerdemo.presentation.navigation.Destinations
+import uz.maverick.movieexplorerdemo.presentation.navigation.main.MainDestinations
 import uz.maverick.movieexplorerdemo.presentation.viewModels.FavoriteViewModel
-import uz.maverick.movieexplorerdemo.presentation.widgets.MovieItem
 import uz.maverick.movieexplorerdemo.utils.POSTER_PATH_154
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,7 +60,9 @@ fun FavoriteScreen(
         },
         modifier = modifier
     ) { innerPadding ->
-        Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .padding(innerPadding)) {
             if (favoriteMovies.value.isEmpty()) {
                 Column(
                     modifier = Modifier
@@ -99,14 +99,18 @@ private fun FavoriteMoviesList(
             MovieItem(
                 item = movie,
                 onClick = {
-                    navController.navigate(route = Destinations.DetailScreen.passId(movie.id ?: 0))
+                    navController.navigate(
+                        route = MainDestinations.MovieDetailsScreen.createRoute(
+                            movie.id ?: 0
+                        )
+                    )
                 }
             )
         }
     }
 }
 
- @Composable
+@Composable
 private fun MovieItem(
     modifier: Modifier = Modifier,
     item: MovieItemEntity,

@@ -1,15 +1,10 @@
-package uz.maverick.movieexplorerdemo.presentation.screens
+package uz.maverick.movieexplorerdemo.presentation.screens.main
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.FavoriteBorder
-import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -19,11 +14,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import uz.maverick.movieexplorerdemo.domain.entities.MovieItemEntity
-import uz.maverick.movieexplorerdemo.presentation.navigation.Destinations
+import uz.maverick.movieexplorerdemo.presentation.navigation.main.MainDestinations
 import uz.maverick.movieexplorerdemo.presentation.viewModels.MainViewModel
 import uz.maverick.movieexplorerdemo.presentation.widgets.MainGridWidget
 import uz.maverick.movieexplorerdemo.presentation.widgets.ProgressWidget
@@ -32,30 +28,12 @@ import uz.maverick.movieexplorerdemo.presentation.widgets.ProgressWidget
 @Composable
 fun HomeScreen(
     navController: NavController,
-    viewModel: MainViewModel,
+    viewModel: MainViewModel = hiltViewModel(),
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Movie Explorer Demo") },
-                actions = {
-                    IconButton(
-                        onClick = { navController.navigate(route = Destinations.SearchScreen.label) },
-                    ) {
-                        Icon(
-                            imageVector = Icons.Rounded.Search,
-                            contentDescription = "Search",
-                        )
-                    }
-                    IconButton(
-                        onClick = { navController.navigate(route = Destinations.FavoriteScreen.label) },
-                    ) {
-                        Icon(
-                            imageVector = Icons.Rounded.FavoriteBorder,
-                            contentDescription = "Bookmark",
-                        )
-                    }
-                }
             )
         },
     ) { innerPadding ->
@@ -73,7 +51,11 @@ fun HomeScreen(
                 else -> MainGridWidget(
                     pagingItems, loadState,
                     onClick = { movieId ->
-                        navController.navigate(route = Destinations.DetailScreen.passId(movieId))
+                        navController.navigate(
+                            route = MainDestinations.MovieDetailsScreen.createRoute(
+                                movieId
+                            )
+                        )
                     },
                     toggleFavorite = { movieContainer ->
                         viewModel.toggleFavoriteButton(movieContainer)

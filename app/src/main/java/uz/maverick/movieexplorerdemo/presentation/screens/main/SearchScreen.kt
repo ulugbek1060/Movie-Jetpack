@@ -1,4 +1,4 @@
-package uz.maverick.movieexplorerdemo.presentation.screens
+package uz.maverick.movieexplorerdemo.presentation.screens.main
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -26,7 +26,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import uz.maverick.movieexplorerdemo.presentation.navigation.Destinations
+import uz.maverick.movieexplorerdemo.presentation.navigation.main.MainDestinations
 import uz.maverick.movieexplorerdemo.presentation.viewModels.SearchMoviesViewModel
 import uz.maverick.movieexplorerdemo.presentation.widgets.MainGridWidget
 import uz.maverick.movieexplorerdemo.presentation.widgets.ProgressWidget
@@ -76,7 +76,11 @@ fun SearchContent(
             else -> MainGridWidget(
                 pagingItems, loadState,
                 onClick = { movieId ->
-                    navController.navigate(route = Destinations.DetailScreen.passId(movieId))
+                    navController.navigate(
+                        route = MainDestinations.MovieDetailsScreen.createRoute(
+                            movieId
+                        )
+                    )
                 },
                 toggleFavorite = { movieContainer ->
                     viewModel.toggleFavoriteButton(movieContainer)
