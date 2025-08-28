@@ -1,5 +1,3 @@
-## This project was developed as part of a technical interview
-
 ### 🔧 Tech Stack & Architecture
 
 - **Jetpack Compose** – For building a modern, declarative UI  
